@@ -1,0 +1,6 @@
+[submodule "digestpp"]
+	path = digestpp
+	url = https://github.com/kerukuro/digestpp.git
+[submodule "Lab1/digestpp"]
+	path = Lab1/digestpp
+	url = https://github.com/kerukuro/digestpp.git
