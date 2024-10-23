@@ -9,7 +9,8 @@ BlockPoS::BlockPoS(string data, string hash, string previousHash, time_t timesta
 }
 
 string BlockPoS::printBlock(){
-    return "\tData: " + this->data + "\n\tHash: " + this->hash + "\n\tPrevious Hash: " + this->previousHash + "\n\tTimestamp: " + to_string(this->timestamp);
+    return "\tData: " + this->data + "\n\tHash: " + this->hash + "\n\tPrevious Hash: " \
+        + this->previousHash + "\n\tTimestamp: " + to_string(this->timestamp) + "\n\tValidator: " + this->validator;
 }
 
 BlockchainPoS::BlockchainPoS(string data){
@@ -44,6 +45,11 @@ void BlockchainPoS::printChain(){
     }
 }
 
+map<string, int> BlockchainPoS::getStakes(){
+    return this->stakes;
+}
+
+
 void BlockchainPoS::addStake(string validator, int amount){
     stakes[validator] += amount;
 }
@@ -75,9 +81,9 @@ int main(){
 
     BlockchainPoS blockchain("Genesis Block");
 
-    blockchain.addStake("Validator1", 100);
-    blockchain.addStake("Validator2", 50);
-    blockchain.addStake("Validator3", 150);
+    for(int i = 0; i < 6; i++){
+        blockchain.addStake("Validator" + to_string(i), (rand() % 1000) + 1);
+    }
 
     blockchain.addBlock("Block 1");
     blockchain.addBlock("Block 2");
@@ -87,8 +93,14 @@ int main(){
     std::chrono::duration<double> duration = end - start;
 
     blockchain.printChain();
-
+    
     std::cout << "Time taken to add blocks: " << duration.count() << " seconds" << std::endl;
+
+    cout << "Stakes:" << endl;
+    for (const auto& stake : blockchain.getStakes()) {
+        cout << "Validator: " << stake.first << ", Stake: " << stake.second << endl;
+    }
+    
 
     return 0;
 }

@@ -26,6 +26,7 @@ class BlockchainPoS{
     public:
         BlockchainPoS(string data);
         vector<BlockPoS> getChain();
+        map<string, int> getStakes();
         void printChain();
         void addBlock(string data);
         void addStake(string validator, int amount);
