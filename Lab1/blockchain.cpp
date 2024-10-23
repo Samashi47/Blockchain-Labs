@@ -58,11 +58,23 @@ void Blockchain::mineBlock(Block &block, int difficulty){
 }
 
 int main(){
+    
+    auto start = std::chrono::high_resolution_clock::now();
+
     Blockchain blockchain("Genesis Block");
     blockchain.addBlock("Block 1");
     blockchain.addBlock("Block 2");
     blockchain.addBlock("Block 3");
-    blockchain.printChain();
+    
     blockchain.mineBlock(blockchain.getChain()[1], 3);
+    blockchain.mineBlock(blockchain.getChain()[2], 3);
+    blockchain.mineBlock(blockchain.getChain()[3], 3);
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    
+    blockchain.printChain();
+    std::cout << "Time taken to add blocks: " << duration.count() << " seconds" << std::endl;
+    
     return 0;
 }
