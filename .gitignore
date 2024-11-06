@@ -218,7 +218,7 @@ cython_debug/
 # *.pdf
 
 ## Source Code .TeX files
-.tex
+*.tex
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
