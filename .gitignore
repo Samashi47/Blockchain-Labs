@@ -504,3 +504,6 @@ TSWLatexianTemp*
 # ignore images and pdfs
 *.png
 *.pdf
+
+# ignore chain folder
+hhproject/
