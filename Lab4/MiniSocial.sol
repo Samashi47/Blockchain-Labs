@@ -30,8 +30,8 @@ contract MiniSocial {
         posts.push(Post(posts.length, msg.sender, _message, 0, new string[](0), block.timestamp));
     }
 
-    function getPost(uint index) public view returns (string memory, address){
-        return (posts[index].tweet, posts[index].author);
+    function getPost(uint index) public view returns (uint, string memory, address, uint){
+        return (posts[index].id , posts[index].tweet, posts[index].author, posts[index].timestamp);
     }
 
     function getTotalPosts() public view returns (uint) {
