@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social DApp</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.3.5/dist/web3.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="./app.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="navbar-content">
+        <h1 class="app-title"><i class="fas fa-cube"></i> Social DApp</h1>
+        <button class="connect-button" onclick="connectWallet()">
+          <i class="fas fa-wallet"></i>
+          <span id="connectButtonText">Connect Wallet</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div id="userAddress" class="user-address"></div>
+      <div class="publish-card">
+        <textarea
+          id="postMessage"
+          class="publish-input"
+          placeholder="What's on your mind?"
+        ></textarea>
+        <button class="publish-button" onclick="publishPost()">
+          <i class="fas fa-paper-plane"></i> Publish
+        </button>
+      </div>
+      <div id="posts"></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      let web3;
+      let miniSocial;
+      let accounts;
+
+      const contractAddress = "0x73511669fd4dE447feD18BB79bAFeAC93aB7F31f";
+      const contractABI = [
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_comment",
+              type: "string",
+            },
+          ],
+          name: "commentOnPost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "deletePost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "downvotePost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_message",
+              type: "string",
+            },
+          ],
+          name: "modPost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_message",
+              type: "string",
+            },
+          ],
+          name: "publishPost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "upvotePost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "getPost",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "getPostComments",
+          outputs: [
+            {
+              internalType: "string[]",
+              name: "",
+              type: "string[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "getPostVotes",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "",
+              type: "int256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getTotalPosts",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "hasDownvoted",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "hasUpvoted",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "posts",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "author",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "tweet",
+              type: "string",
+            },
+            {
+              internalType: "int256",
+              name: "votes",
+              type: "int256",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ];
+
+      async function connectWallet() {
+        try {
+          web3 = new Web3("http://localhost:8545");
+          if (window.ethereum) {
+            accounts = await window.ethereum.request({
+              method: "eth_requestAccounts",
+            });
+
+            miniSocial = new web3.eth.Contract(contractABI, contractAddress);
+
+            document.getElementById("userAddress").innerHTML = `
+                <i class="fas fa-user-circle"></i> Connected: ${accounts[0].substring(
+                  0,
+                  6
+                )}...${accounts[0].substring(38)}
+            `;
+            document.getElementById("connectButtonText").textContent =
+              "Connected";
+            loadPosts();
+          } else {
+            throw new Error("MetaMask not detected");
+          }
+        } catch (error) {
+          console.error("Connection error:", error);
+          showToast("Failed to connect: " + error.message);
+        }
+      }
+
+      async function publishPost() {
+        const message = document.getElementById("postMessage").value;
+        if (!message.trim()) return;
+
+        try {
+          await miniSocial.methods
+            .publishPost(message)
+            .send({ from: accounts[0] });
+          document.getElementById("postMessage").value = "";
+          loadPosts();
+        } catch (error) {
+          console.error("Transaction failed:", error.message);
+          alert("Transaction failed: " + error.message);
+        }
+      }
+
+      function toggleMenu(index) {
+        const menus = document.querySelectorAll(".menu-content");
+        menus.forEach((menu, i) => {
+          if (i !== index) menu.classList.remove("show");
+        });
+        const menu = document.querySelector(`#menu${index}`);
+        menu.classList.toggle("show");
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".post-menu")) {
+          document.querySelectorAll(".menu-content").forEach((menu) => {
+            menu.classList.remove("show");
+          });
+        }
+      });
+
+      function showToast(message, duration = 3000) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.style.display = "block";
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, duration);
+      }
+
+      async function handleError(error) {
+        console.log("Full error object:", error);
+        showToast(error.message || "Transaction failed");
+      }
+
+      async function loadPosts() {
+        try {
+          const postCount = await miniSocial.methods.getTotalPosts().call();
+          const postsDiv = document.getElementById("posts");
+          postsDiv.innerHTML = "";
+
+          for (let i = 0; i < postCount; i++) {
+            try {
+              const post = await miniSocial.methods.getPost(i).call();
+              if (post[2] === "0x0000000000000000000000000000000000000000") {
+                continue;
+              }
+              const votes = await miniSocial.methods.getPostVotes(i).call();
+              const comments = await miniSocial.methods
+                .getPostComments(i)
+                .call();
+
+              const postDiv = document.createElement("div");
+              postDiv.className = "post";
+              postDiv.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-meta">
+                            <i class="fas fa-user"></i> ${post[2].substring(
+                              0,
+                              6
+                            )}...${post[2].substring(38)}
+                            <span class="post-time">
+                                <i class="far fa-clock"></i> ${new Date(
+                                  post[3] * 1000
+                                ).toLocaleString()}
+                            </span>
+                        </div>
+                        <div class="post-menu">
+                            <button class="menu-button" onclick="toggleMenu(${i})">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="menu-content" id="menu${i}">
+                                <div class="menu-item" onclick="modifyPost(${i})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </div>
+                                <div class="menu-item delete" onclick="deletePost(${i})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">${post[1]}</div>
+                    <div class="post-actions">
+                        <div class="votes-group">
+                            <span class="votes-count">${votes}</span>
+                            <button class="vote-button" onclick="upvotePost(${i})">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button class="vote-button" onclick="downvotePost(${i})">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="comment-section">
+                        <div class="comment-input-group">
+                            <input type="text" id="comment${i}" class="comment-input" placeholder="Add a comment...">
+                            <button class="comment-button" onclick="commentOnPost(${i})">
+                                <i class="fas fa-comment"></i>
+                            </button>
+                        </div>
+                        <div class="comments-list">
+                            ${comments
+                              .map(
+                                (comment) => `
+                                <div class="comment">
+                                    <i class="fas fa-comment-dots"></i> ${comment}
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+              postsDiv.appendChild(postDiv);
+            } catch (error) {
+              console.error(`Error loading post ${i}:`, error);
+              continue;
+            }
+          }
+        } catch (error) {
+          console.error("Error loading posts:", error);
+          handleError(error);
+        }
+      }
+
+      async function upvotePost(index) {
+        try {
+          await miniSocial.methods
+            .upvotePost(index)
+            .send({ from: accounts[0] });
+          loadPosts();
+        } catch (error) {
+          handleError(error);
+        }
+      }
+
+      async function downvotePost(index) {
+        try {
+          await miniSocial.methods
+            .downvotePost(index)
+            .send({ from: accounts[0] });
+          loadPosts();
+        } catch (error) {
+          handleError(error);
+        }
+      }
+
+      async function deletePost(index) {
+        try {
+          await miniSocial.methods
+            .deletePost(index)
+            .send({ from: accounts[0] });
+          document.querySelector(`#menu${index}`).classList.remove("show");
+          loadPosts();
+        } catch (error) {
+          handleError(error);
+        }
+      }
+
+      async function modifyPost(index) {
+        const newMessage = prompt("Enter new message:");
+        if (newMessage) {
+          try {
+            await miniSocial.methods
+              .modPost(index, newMessage)
+              .send({ from: accounts[0] });
+            document.querySelector(`#menu${index}`).classList.remove("show");
+            loadPosts();
+          } catch (error) {
+            handleError(error);
+          }
+        }
+      }
+
+      async function commentOnPost(index) {
+        const comment = document.getElementById(`comment${index}`).value;
+        if (!comment.trim()) return;
+
+        try {
+          await miniSocial.methods
+            .commentOnPost(index, comment)
+            .send({ from: accounts[0] });
+          document.getElementById(`comment${index}`).value = "";
+          loadPosts();
+        } catch (error) {
+          handleError(error);
+        }
+      }
+    </script>
+  </body>
+</html>

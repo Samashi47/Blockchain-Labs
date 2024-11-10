@@ -1,0 +1,357 @@
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #6366f1;
+  --background-color: #f3f4f6;
+  --card-background: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", -apple-system, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.navbar {
+  background-color: var(--card-background);
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.container {
+  max-width: 800px;
+  margin: 80px auto 0;
+  padding: 20px;
+}
+
+.connect-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connect-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.user-address {
+  background-color: var(--card-background);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.publish-card {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.publish-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.publish-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.publish-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.post {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.post-meta {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.post-content {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.votes-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vote-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.vote-button:hover {
+  color: var(--primary-color);
+}
+
+.votes-count {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 3ch;
+  text-align: center;
+}
+
+.post-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.menu-content {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  z-index: 10;
+  display: none;
+}
+
+.menu-content.show {
+  display: block;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: var(--background-color);
+}
+
+.menu-item.delete {
+  color: #ef4444;
+}
+
+.comment-section {
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.comment-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: stretch;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    height: 40px;
+    box-sizing: border-box;
+    line-height: 1;
+    margin: 0;
+}
+
+.comment-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 40px;
+    margin: 0;
+    box-sizing: border-box;
+    line-height: 40px;
+}
+
+.comment-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.action-button {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: #e5e7eb;
+}
+
+.votes-count {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.comment-section {
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.comments-list {
+  margin-top: 1rem;
+}
+
+.comment {
+  background-color: #f9fafb;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.delete-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #dc2626;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 10px;
+  }
+
+  .post {
+    padding: 1rem;
+  }
+
+  .post-actions {
+    flex-wrap: wrap;
+  }
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ef4444;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: none;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
